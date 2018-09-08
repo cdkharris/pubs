@@ -196,7 +196,7 @@ class TestAlone(CommandTestCase):
 
     def test_alone_misses_command(self):
         with self.assertRaises(FakeSystemExit) as cm:
-            self.execute_cmds(['pubs'])
+            self.execute_cm<ds(['pubs'])
         self.assertEqual(cm.exception.code, 2)
 
     def test_alone_prints_help(self):
@@ -842,6 +842,15 @@ class TestUsecase(DataCommandTestCase):
             fixtures.page_bibentry, ignore_fields=['author', 'title'])
         self.assertEqual(outs[2], expected + os.linesep)
 
+    def test_export_default(self):
+        cmds = ['pubs init',
+                ('pubs add', [str_fixtures.bibtex_external0]),
+                'pubs export',
+                ]
+        outs = self.execute_cmds(cmds)
+        self.assertEqual(endecoder.EnDecoder().decode_bibdata(outs[2]),
+                         fixtures.page_bibentry)
+                
     def test_import(self):
         cmds = ['pubs init',
                 'pubs import data/',
@@ -910,7 +919,6 @@ class TestUsecase(DataCommandTestCase):
 
     def test_add_with_tag(self):
         cmds = ['pubs init',
-                'pubs add data/pagerank.bib --tags junk',
                 'pubs tag junk'
                ]
         outs = self.execute_cmds(cmds)
